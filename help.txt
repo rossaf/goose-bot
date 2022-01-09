@@ -1,0 +1,8 @@
+``                                                   
+  Goosebot Help Menu:                             
+  !help - Lookup Commands
+  -                         
+  !coins - Crypto Commands
+  ///!coins get {asset} {compare} {period}
+  ///!coins top
+                                                  ``
