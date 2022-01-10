@@ -2,10 +2,25 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from PIL import Image
 import time
-import discord
-import io
+from dotenv import load_dotenv
+import os
+
+def loadBrowser():
+    load_dotenv()
+    CHROMEDRIVER_PATH = os.getenv("CHROMEDRIVER_PATH")
+    GOOGLE_CHROME_PATH = os.getenv("GOOGLE_CHROME_PATH")
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.binary_location = GOOGLE_CHROME_PATH
+
+    browser = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=chrome_options)
+    return browser
+
 
 def getCrypto(args):
+    
     if args[0] == 'get':
         if len(args) == 4:
             return getPrice(args[1], args[2], args[3])
@@ -23,13 +38,14 @@ def getCrypto(args):
 
 def getPrice(coin, compare, period):
     coin = coin.upper()
+    browser = loadBrowser()
 
     link = f'cryptowat.ch/charts/KRAKEN:{coin}-{compare}'
     if period:
         link = link + f'?period={period}'
         
     print(link)
-    with webdriver.Chrome("C:/Users/dasve/Pictures/goosebot-main/goosebot-main/chromedriver") as driver:        
+    with browser as driver:        
         desktop = {'output': str(link) + '-desktop.png', 'width': 2916, 'height': 844}
         
         linkWithProtocol = 'https://' + str(link)
@@ -65,7 +81,9 @@ def getPrice(coin, compare, period):
 
 def getTop():
     link = 'cryptowat.ch/assets'
-    with webdriver.Chrome("C:/Users/dasve/Pictures/goosebot-main/goosebot-main/chromedriver") as driver:
+    browser = loadBrowser()
+
+    with browser as driver:
         desktop = {'output': str(link) + '-desktop.png', 'width': 1920, 'height': 1080}
             
         linkWithProtocol = 'https://' + str(link)
