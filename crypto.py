@@ -11,6 +11,7 @@ def loadBrowser():
     GOOGLE_CHROME_PATH = os.getenv("GOOGLE_CHROME_PATH")
 
     chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.binary_location = GOOGLE_CHROME_PATH
@@ -46,7 +47,7 @@ def getPrice(coin, compare, period):
         
     print(link)
     with browser as driver:        
-        desktop = {'output': str(link) + '-desktop.png', 'width': 2916, 'height': 844}
+        desktop = {'output': str(link) + '-desktop.png', 'width': 1672, 'height': 806}
         
         linkWithProtocol = 'https://' + str(link)
         
@@ -59,7 +60,7 @@ def getPrice(coin, compare, period):
         try:    
             price = driver.find_element(By.XPATH, '//*[@id="marketview-watchlist"]/div/div/nav/div[4]/a/div[2]/span[1]')
             change = driver.find_element(By.XPATH, '//*[@id="marketview-watchlist"]/div/div/nav/div[4]/a/div[2]/span[2]/span')
-            ele = driver.find_element(By.XPATH, '/html/body/div[1]/main/div[1]/div[2]/div/div[1]/div/div/div[3]/div[1]')
+            ele = driver.find_element(By.XPATH, '/html/body/div[1]/main/div[1]/div[2]/div/div[1]/div/div/div[3]/div[1]/div[1]')
         except:
             return ['**ERROR:** There was an error serving your request...']
         loc = ele.location
@@ -80,7 +81,7 @@ def getPrice(coin, compare, period):
         return [f'**{coin}/{compare} Prices {period}:**', f'${pricein}/{changein}', '~discord.File("temp.png")']
 
 def getTop():
-    link = 'cryptowat.ch/assets'
+    link = 'cryptowat.ch/cards/assets'
     browser = loadBrowser()
 
     with browser as driver:
@@ -95,7 +96,7 @@ def getTop():
         time.sleep(2)
         driver.save_screenshot('temp.png')
         try: 
-            ele = driver.find_element(By.XPATH, '//*[@id="main-content"]/div[1]/div/div/div[3]')
+            ele = driver.find_element(By.XPATH, '//*[@id="main-content"]/div[1]/div/div/div[2]')
         except:
             return ['**ERROR:** There was an error serving your request...']
         loc = ele.location
@@ -103,7 +104,7 @@ def getTop():
         x = loc['x']
         y = loc['y']
         w = size['width']
-        h = 600
+        h = size['height']
         width = x + w
         height = y + h
         im = Image.open('temp.png')
