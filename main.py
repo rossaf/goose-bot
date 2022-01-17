@@ -32,20 +32,23 @@ async def yt(ctx, command, *args):
 
 @client.command()
 async def coin(ctx, *args):
-    response = crypto.getCrypto(args)
-    await sendChat(response, ctx)
+    async with ctx.typing():
+        response = crypto.getCrypto(args)
+        await sendChat(response, ctx)
 
 @client.command()
 async def chess(ctx, command, *args):
-    if command == 'challenge':
-        response = chessdriver.challenge(ctx, *args)
-    if command == 'accept':
-        response = chessdriver.accept(*args)
-    if command == 'view':
-        response = chessdriver.view(*args)
-    if command == 'move':
-        response = chessdriver.move(ctx, *args)
-    await sendChat(response, ctx)
+    async with ctx.typing():
+        if command == 'challenge':
+            await chessdriver.challenge(ctx, client, *args)
+        if command == 'accept':
+            await chessdriver.accept(ctx, client, *args)
+        if command == 'view':
+            await chessdriver.view(ctx, client, *args)
+        if command == 'move':
+            await chessdriver.move(ctx, client, *args)
+        if command == 'list':
+            await chessdriver.list(ctx, client, *args)
 
 
 async def sendChat(response, ctx):
