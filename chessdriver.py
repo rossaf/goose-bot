@@ -141,12 +141,15 @@ async def move(ctx, client, movefrom, moveto, gameid):
     if board.is_stalemate() or board.is_insufficient_material() or board.is_checkmate():
         embed=discord.Embed(title="Game Over! ", description=f'<@!{player}> has defeated <!{nextplayer}> through checkmate!', color=0xffc800)
         await ctx.send(embed=embed)
+        ref.set({})
     elif board.is_stalemate():
         embed=discord.Embed(title="Game Over! ", description=f'<@!{player}> vs <!{nextplayer}> is a stalemate!', color=0xffc800)
         await ctx.send(embed=embed)
+        ref.set({})
     elif board.is_insufficient_material():
         embed=discord.Embed(title="Game Over! ", description=f'<@!{player}> vs <!{nextplayer}> is has insufficient material!', color=0xffc800)
         await ctx.send(embed=embed)
+        ref.set({})
     return
 
 async def concede(ctx, gameid):
