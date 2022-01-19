@@ -104,7 +104,7 @@ def getTop():
         x = loc['x']
         y = loc['y']
         w = size['width']
-        h = size['height']
+        h = 700
         width = x + w
         height = y + h
         im = Image.open('temp.png')
