@@ -9,7 +9,11 @@ import uuid
 import firebase_admin
 from firebase_admin import db
 import chessdriver
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+engloc = os.getenv("ENGINE_LOC")
 
 
 cred_obj = firebase_admin.credentials.Certificate('firebaseKey.json')
@@ -79,7 +83,7 @@ async def accept(ctx, client, gameid):
     return
 
 async def move(ctx, client, movefrom, moveto, gameid):
-    engine = chess.engine.SimpleEngine.popen_uci("stockfish/stockfish")
+    engine = chess.engine.SimpleEngine.popen_uci(engloc)
     try:
         ref = db.reference(f'/chess_games/{gameid}')
     except:
