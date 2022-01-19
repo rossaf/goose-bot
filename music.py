@@ -3,6 +3,7 @@ from discord import FFmpegPCMAudio
 from discord import TextChannel
 from discord.utils import get
 import discord
+import chess.engine
 
 async def join(ctx, client):
     channel = ctx.message.author.voice.channel

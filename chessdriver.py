@@ -8,6 +8,7 @@ import datetime
 import uuid
 import firebase_admin
 from firebase_admin import db
+import chessdriver
 
 
 
@@ -24,7 +25,14 @@ async def challenge(ctx, client, challenger):
     id = str(id)[:6]
     id = id.upper()
 
+    accepted = "false"
+    description = f"To accept the challenge, type !chess accept {id}"
+    
     challenger =  challenger.replace('@', '').replace('!', '').replace('<', '').replace('>', '')
+
+    if int(challenger) == 807750602259169330:
+        accepted = "true"
+        description = "This is a computer match."
 
     expires = datetime.datetime.now()
     days = datetime.timedelta(days = 2)
@@ -36,12 +44,12 @@ async def challenge(ctx, client, challenger):
 		"white": ctx.author.id,
 		"black": challenger,
         "expires": expires.strftime("%c"),
-        "accepted": "false"
+        "accepted": accepted
 	}
     
     ref.child(id).set(fen)
 
-    embed=discord.Embed(title=f"{ctx.author} challenges {await client.fetch_user(challenger)}", description=f"To accept the challenge, type !chess accept {id}", color=0xffc800)
+    embed=discord.Embed(title=f"{ctx.author} challenges {await client.fetch_user(challenger)}", description=description, color=0xffc800)
     embed.add_field(name="Expires:", value=expires, inline=True)
     embed.add_field(name="Game ID:", value=id, inline=True)
 
@@ -71,6 +79,7 @@ async def accept(ctx, client, gameid):
     return
 
 async def move(ctx, client, movefrom, moveto, gameid):
+    engine = chess.engine.SimpleEngine.popen_uci("stockfish/stockfish")
     try:
         ref = db.reference(f'/chess_games/{gameid}')
     except:
@@ -98,9 +107,10 @@ async def move(ctx, client, movefrom, moveto, gameid):
 
     print(type(player))
     print(type(ctx.author.id))
-    if int(player) != ctx.author.id:
-        await ctx.send(f'**It is <@!{player}>\'s turn to move a {turn} piece...**')
-        return
+    if int(player) != 807750602259169330:
+        if int(player) != ctx.author.id:
+            await ctx.send(f'**It is <@!{player}>\'s turn to move a {turn} piece...**')
+            return
  
     if move in board.legal_moves:
         board.push(move)
@@ -150,6 +160,15 @@ async def move(ctx, client, movefrom, moveto, gameid):
         embed=discord.Embed(title="Game Over! ", description=f'<@!{player}> vs <!{nextplayer}> is has insufficient material!', color=0xffc800)
         await ctx.send(embed=embed)
         ref.set({})
+
+    if int(nextplayer) == 807750602259169330:
+        await ctx.send("<@!807750602259169330> is thinking...")
+        result = engine.play(board, chess.engine.Limit(time=0.1))
+        moveuci = result.move.uci()
+        await ctx.send("Moving from " + moveuci[0:2] + " to " + moveuci[2:4])
+        await chessdriver.move(ctx, client, moveuci[0:2], moveuci[2:4], gameid)
+    engine.quit()
+
     return
 
 async def concede(ctx, gameid):
