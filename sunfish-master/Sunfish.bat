@@ -1,0 +1,1 @@
+C:\Python310\python -u xboard.py

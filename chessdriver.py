@@ -9,11 +9,7 @@ import uuid
 import firebase_admin
 from firebase_admin import db
 import chessdriver
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-engloc = os.getenv("ENGINE_LOC")
+import pathlib
 
 
 cred_obj = firebase_admin.credentials.Certificate('firebaseKey.json')
@@ -83,7 +79,10 @@ async def accept(ctx, client, gameid):
     return
 
 async def move(ctx, client, movefrom, moveto, gameid):
-    engine = chess.engine.SimpleEngine.popen_uci(engloc)
+
+    args = ['py', '-u', 'sunfish-master/xboard.py']
+    engine = await chess.engine.SimpleEngine.popen_xboard(command=args)
+
     try:
         ref = db.reference(f'/chess_games/{gameid}')
     except:
